@@ -15,7 +15,7 @@ const mainHandler = {
 		console.log('skipIntent called...');
 
 		if (this.attributes['CURRENT_STEP'] == 'launch') {
-			this.emit(':ask', config.ask_for_test, "I'm still waiting for your reply.");
+			this.emit(':ask', 'Seems like you are quite aware of what mind can achieve and accomplish. To optimise its capabilities  <break time="300ms"/>To experience its power ' + config.ask_for_test, "I'm still waiting for your reply.");
 		}
 	},
 	'selectSubscription': function () {
@@ -145,7 +145,7 @@ function findScore(response, callback) {
 			config.FEEDBACK = 'Wow, seems like you are quite aware of what mind can achieve and accomplish. To optimise its capabilities,  ' + config.ask_for_test;
 		} else {
 			console.log("scorecard is", config.SCORE_CARD);
-			config.FEEDBACK = 'Well, you must be pondering how powerful mind is and what it can accomplish. To experience its power' + config.ask_for_test;
+			config.FEEDBACK = 'Well, you must be pondering how powerful mind is <break time="300ms"/> and what it can accomplish.  <break time="300ms"/>To experience its power' + config.ask_for_test;
 		}
 	}
 	else if (config.EVENT.session.attributes.CURRENT_STEP == "anger_test") {
