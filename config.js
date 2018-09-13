@@ -7,6 +7,7 @@ const config = {
   ask_for_test: "<prosody rate='96%'> we recommend you choose <break time='300ms'/> one or more of our experiential learning programmes. Please speak the program you want to opt for <break time='300ms'/> Anger Management <break time='300ms'/> Stress Management <break time='300ms'/> Boost Self- Confidence. </prosody>",
   STOP_MSG: 'Thank you for using Mind Spa. I hope i have made a difference in your life. Whenever you are confused about mind, just Remember me.',
   SUBSCRIBE_MSG: "",
+  ANGER_INTRO: "<prosody rate='96%'>Anger is a normal, healthy emotion. It becomes unhealthy when it flares up all the time or spirals out of control.  </prosody>",
 
 
   SKILL_NAME: 'Therapist',

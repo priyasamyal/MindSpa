@@ -6,7 +6,6 @@ const mainHandler = {
 	/** first intent to call */
 	'LaunchRequest': function () {
 		getUserData(myResult => {
-			console.log('LaunchRequestIntent called...');
 			console.log('LaunchRequestIntent called...', "result", myResult.quizzes['Anger']);
 			this.attributes['CURRENT_STEP'] = 'launch';
 			config.CURRENT_INDEX = 0;
@@ -15,19 +14,14 @@ const mainHandler = {
 
 	},
 
-	'skipIntent': function () {
-		console.log('skipIntent called...');
-		if (this.attributes['CURRENT_STEP'] == 'launch') {
-			this.emit(':ask', 'Seems like you are quite aware of what mind can achieve and accomplish. To optimise its capabilities  <break time="300ms"/>To experience its power ' + config.ask_for_test, "I'm still waiting for your reply.");
-		}
-	},
-
 	'quizTypes': function () {
 		console.log('quizTypes called...');
 		var type = config.EVENT.request.intent.slots.options.value;
 		if (type.toUpperCase() == 'ANGER MANAGEMENT') {
-			this.attributes['CURRENT_STEP'] = 'anger_test';
+			//	this.attributes['CURRENT_STEP'] = 'anger_test';
+			this.attributes['CURRENT_STEP'] = 'ask_for_anger';
 			console.log('Anger management opted...');
+			this.emit(":ask", config.ANGER_INTRO + " <break time='200ms'/> You can subscribe to our tips on Anger Management. If you want Mind Spa to send you the daily tips on Anger Management and to keep track of your behaviour, then say  <break time='200ms'/> Yes  <break time='200ms'/>or to skip this option say  <break time='200ms'/> skip ")
 			this.emit("startQuiz");
 		}
 		else if (config.EVENT.request.intent.slots.options.value == 'stress management') {
@@ -41,21 +35,22 @@ const mainHandler = {
 		}
 	},
 
+	'skipIntent': function () {
+		console.log('skipIntent called...');
+		if (this.attributes['CURRENT_STEP'] == 'launch') {
+			this.emit(':ask', 'Seems like you are quite aware of what mind can achieve and accomplish. To optimise its capabilities  <break time="300ms"/>To experience its power ' + config.ask_for_test, "I'm still waiting for your reply.");
+		}
+	},
+
+
+
 	'startQuiz': function () {
 		console.log('startQuiz called');
-		if (this.attributes['CURRENT_STEP'] == 'mind_test') {
-			findOptions(result => {
-				console.log(result, "result");
-				this.emit(':ask', result, "I'm still waiting for your reply. Repeating the current question" + result);
-			})
-
-		}
-
-		else if (this.attributes['CURRENT_STEP'] == 'anger_test') {
+		if (this.attributes['CURRENT_STEP'] == 'anger_test') {
 			findOptions(result => {
 				var intro_msg = "";
 				if (config.CURRENT_INDEX == 0) {
-					intro_msg = "Anger is a normal, healthy emotion. But it’s unhealthy when it flares up all the time or spirals out of control. Let us run through a small quiz to gauge your Current Anger Level to move further.  <break time='400ms'/>"
+					intro_msg = "It's always good to know how much deep inside the  water. <break time='200ms'/>you are so <break time='300ms'/>to measure your temperament. <break time='200ms'/>let's have a small quiz  <break time='400ms'/>"
 				}
 				console.log(result, "result");
 				this.emit(':ask', intro_msg + result, "I'm still waiting for your reply. Repeating the current question" + result);
@@ -66,15 +61,20 @@ const mainHandler = {
 	'quizResponse': function () {
 		console.log('quizResponse called', this.attributes['CURRENT_STEP']);
 
-		if (this.attributes['CURRENT_STEP'] == 'launch' && config.EVENT.request.intent.slots.response.value == 'yes') {
-			this.emit('AMAZON.YesIntent');
+		if (this.attributes['CURRENT_STEP'] == 'ask_for_anger' && config.EVENT.request.intent.slots.response.value == 'yes') {
+			this.attributes['CURRENT_STEP'] = 'anger_test';
+			this.emit('startQuiz');
 		}
-		else if (this.attributes['CURRENT_STEP'] == 'launch' && config.EVENT.request.intent.slots.response.value == 'no') {
-			this.emit('AMAZON.CancelIntent');
-		}
-		else if (this.attributes['CURRENT_STEP'] == 'launch' && config.EVENT.request.intent.slots.response.resolutions.resolutionsPerAuthority[0].status.code == 'ER_SUCCESS_NO_MATCH') {
-			this.emit(':ask', "Sorry, I did not hear you. To take the quiz, say <break time='300ms'/>  Yes. To skip it, say <break time='300ms'/> Skip.", "I am still waiting for your response");
-		}
+
+		// if (this.attributes['CURRENT_STEP'] == 'launch' && config.EVENT.request.intent.slots.response.value == 'yes') {
+		// 	this.emit('AMAZON.YesIntent');
+		// }
+		// else if (this.attributes['CURRENT_STEP'] == 'launch' && config.EVENT.request.intent.slots.response.value == 'no') {
+		// 	this.emit('AMAZON.CancelIntent');
+		// }
+		// else if (this.attributes['CURRENT_STEP'] == 'launch' && config.EVENT.request.intent.slots.response.resolutions.resolutionsPerAuthority[0].status.code == 'ER_SUCCESS_NO_MATCH') {
+		// 	this.emit(':ask', "Sorry, I did not hear you. To take the quiz, say <break time='300ms'/>  Yes. To skip it, say <break time='300ms'/> Skip.", "I am still waiting for your response");
+		// }
 		else if (this.attributes['CURRENT_STEP'] == 'anger_test_over' && config.EVENT.request.intent.slots.response.value == 'yes') {
 			this.emit('AMAZON.YesIntent');
 		}
@@ -86,11 +86,12 @@ const mainHandler = {
 				findScore(config.EVENT.request.intent.slots.response.value, result => {
 					console.log(config.SCORE_CARD, "SCORE_CARD");
 					saveQuizScore(result => {
+						console.log(result, "Quiz result");
 						if (result.average > 1) {
-							this.emit(':ask', "Thank you for taking the quiz.Based on your responses.you suppose to have a high temperament .but you need not to worry about it.Mind spa will help you control it by telling you some tips and stories and monitoring your progress at regular intervals. ", "Please speak to select your option?");
+							this.emit(':ask', "<prosody rate='96%'> Well, Your temperament seems to be good, based on your responses. <break time='300ms'/> Though you can always try our other programmes like Stress Management by saying  <break time='200ms'/> Stress management  or for Boosting self confidence say  <break time='200ms'/>Boost Self Confidence or to stop the session say  <break time='200ms'/> STOP </prosody>");
 						}
 						else {
-							this.emit(':ask', "Your temperament seems to be good based on your responses Though you can always try our other programmes like Stress Management by saying “Stress management” or for Boosting self confidence say “Boost Self Confidence” or to stop the session say STOP");
+							this.emit(':ask', "<prosody rate='96%'> Thank you for taking the quiz. Based on your responses, you suppose to have a high temperament. but you need not to worry about it. Mind spa will help you control it by telling you some tips and stories and monitoring your progress at regular intervals. </prosody>", "Please speak to select your option?");
 						}
 						// console.log("end of quiz", result);
 						// config.SUBSCRIBE_MSG = "<prosody rate='92%'> We wish you all the best in your endeavour to overcome your anger. You can also try our other programmes like Stress Management by saying <break time='300ms'/>  Stress management <break time='300ms'/>  or for Boosting self confidence just say <break time='300ms'/>  Boost Self Confidence <break time='300ms'/>  or to stop the session say <break time='300ms'/>  STOP </prosody>"
@@ -124,13 +125,7 @@ const mainHandler = {
 		}
 
 	},
-	// 'selectSubscription': function () {
-	// 	console.log('selectSubscription called...', config.SUBSCRIBE_MSG);
-	// 	this.attributes['CURRENT_STEP'] = "user_subscribed";
-	// 	var type = config.EVENT.request.intent.slots.type.value;
-	// 	console.log('type');
-	// 	this.emit(':ask', "Thanks for subscribing to our" + type + " tips. " + config.SUBSCRIBE_MSG);
-	// },
+
 
 
 };
@@ -162,7 +157,7 @@ function findScore(response, callback) {
 
 
 		var tipsString =
-			"You can also subscribe  to our tips on anger management. If you want Mind Spa to send you the daily tips on Anger and to keep track of your behavoiur, then say <break time='300ms'/> Yes <break time='300ms'/> or to skip this option say <break time='300ms'/> skip."
+			"You can also subscribe  to our tips on anger management. If you want Mind Spa to send you the daily tips on Anger and to keep track of your behaviour, then say <break time='300ms'/> Yes <break time='300ms'/> or to skip this option say <break time='300ms'/> skip."
 
 
 		config.FEEDBACK =
