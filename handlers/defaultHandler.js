@@ -106,19 +106,18 @@ const defaultHandler = {
 
   },
 
-
   'AMAZON.YesIntent': function () {
-    console.log('YesIntent called...');
-
+    console.log('YesIntent called...', this.attributes['CURRENT_STEP']);
     if (this.attributes['CURRENT_STEP'] == 'launch') {
       this.attributes['CURRENT_STEP'] = 'mind_test';
-
       this.emit('startQuiz');
     }
-    else if (this.attributes['CURRENT_STEP'] == 'anger_quiz_intro') {
-      this.attributes['CURRENT_STEP'] = 'anger_test';
-      this.emit('startQuiz');
+    else if (this.attributes['CURRENT_STEP'] == 'anger_test_over') {
+      this.attributes['CURRENT_STEP'] = "user_anger_subscribed";
 
+      this.emit(':ask', "Thanks for subscribing to our daily tips. " + config.SUBSCRIBE_MSG, "I am still waiting for your response");
+    } else {
+      this.emit(":tell", "Error");
     }
 
 

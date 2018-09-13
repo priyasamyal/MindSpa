@@ -5,7 +5,7 @@ const config = require('./config.js');
 module.exports.handler = (event, context, callback) => {
     try {
         config.EVENT = event;
-
+        config.access_token = event.session.user.accessToken;
         console.log("Current Index is:", config.CURRENT_INDEX);
         console.log("Event is :", event);
         config.EVENT = event;

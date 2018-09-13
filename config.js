@@ -1,6 +1,8 @@
 
 const config = {
-  INTRO_MSG: "<prosody rate='96%'>Hi, welcome to Mind Spa. Mind reflects a person's ability to think and reason. It’s the most powerful element of human beings that enables them to be aware of the world and its experiences. Mind Spa can help you use your mind more effectively and become more mindful. Let’s take a short quiz to find what mind can accomplish. To take the quiz, say <break time='300ms'/>  Yes. To skip it, say <break time='300ms'/> Skip.</prosody>",
+  access_token: '',
+  user_detail: {},
+  INTRO_MSG: "<prosody rate='96%'> <break time='200ms'/>  welcome to Mind Spa. Mind reflects a person's ability to think and reason. It’s the most powerful element of human beings that enables them to be aware of the world and its experiences. <break time='200ms'/>   Mind Spa can help you use your mind more effectively and become more mindful. Here are some interesting facts about the power of  mind .</prosody>",
   INTRO_REPROMPT: '<prosody rate="92%">I am still waiting. Are you ready for the test? </prosody>',
   ask_for_test: "<prosody rate='96%'> we recommend you choose <break time='300ms'/> one or more of our experiential learning programmes. Please speak the program you want to opt for <break time='300ms'/> Anger Management <break time='300ms'/> Stress Management <break time='300ms'/> Boost Self- Confidence. </prosody>",
   STOP_MSG: 'Thank you for using Mind Spa. I hope i have made a difference in your life. Whenever you are confused about mind, just Remember me.',
@@ -11,7 +13,7 @@ const config = {
   EVENT: {},
   CURRENT_STEP: '',
   CURRENT_INDEX: 0,
-  SCORE_CARD: 0,
+  SCORE_CARD: { "quiz": [] },
   FEEDBACK: '',
   // RANDOM_NO: '',
   // HANDLE_TEST_NO_launch: "No problem, I have some audios and techniques to calm you down .To listen to anger management  techniques just say, “Calm me down” or to play audios just say “Play audio”. Or Stop to end this session'",
