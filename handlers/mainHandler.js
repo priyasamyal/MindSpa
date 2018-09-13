@@ -6,10 +6,12 @@ const mainHandler = {
 	/** first intent to call */
 	'LaunchRequest': function () {
 		getUserData(myResult => {
+			var index = Math.floor(Math.random() * Math.floor(quiz.mind_fact.length - 1));
+			console.log(index);
 			console.log('LaunchRequestIntent called...', "result", myResult.quizzes['Anger']);
 			this.attributes['CURRENT_STEP'] = 'launch';
 			config.CURRENT_INDEX = 0;
-			this.emit(':ask', "Hello " + config.user_detail.full_name + config.INTRO_MSG + quiz.mind_fact[0] + " Now you have an idea how powerful mind is and what it can accomplish. To experience its power" + config.ask_for_test);
+			this.emit(':ask', "Hello " + config.user_detail.full_name + config.INTRO_MSG + quiz.mind_fact[index] + quiz.mind_fact[index + 1] + " Now you have an idea how powerful mind is and what it can accomplish. To experience its power" + config.ask_for_test);
 		})
 
 	},
@@ -18,7 +20,6 @@ const mainHandler = {
 		console.log('quizTypes called...');
 		var type = config.EVENT.request.intent.slots.options.value;
 		if (type.toUpperCase() == 'ANGER MANAGEMENT') {
-			//	this.attributes['CURRENT_STEP'] = 'anger_test';
 			this.attributes['CURRENT_STEP'] = 'ask_for_anger';
 			console.log('Anger management opted...');
 			this.emit(":ask", config.ANGER_INTRO + " <break time='200ms'/> You can subscribe to our tips on Anger Management. If you want Mind Spa to send you the daily tips on Anger Management and to keep track of your behaviour, then say  <break time='200ms'/> Yes  <break time='200ms'/>or to skip this option say  <break time='200ms'/> skip ")
@@ -62,8 +63,11 @@ const mainHandler = {
 		console.log('quizResponse called', this.attributes['CURRENT_STEP']);
 
 		if (this.attributes['CURRENT_STEP'] == 'ask_for_anger' && config.EVENT.request.intent.slots.response.value == 'yes') {
-			this.attributes['CURRENT_STEP'] = 'anger_test';
-			this.emit('startQuiz');
+			getQuizSubscription(quiz.anger_quiz[0].quiz_id, result => {
+				console.log(result, "after subscription");
+				this.attributes['CURRENT_STEP'] = 'anger_test';
+				this.emit('startQuiz');
+			})
 		}
 
 		// if (this.attributes['CURRENT_STEP'] == 'launch' && config.EVENT.request.intent.slots.response.value == 'yes') {
@@ -76,7 +80,8 @@ const mainHandler = {
 		// 	this.emit(':ask', "Sorry, I did not hear you. To take the quiz, say <break time='300ms'/>  Yes. To skip it, say <break time='300ms'/> Skip.", "I am still waiting for your response");
 		// }
 		else if (this.attributes['CURRENT_STEP'] == 'anger_test_over' && config.EVENT.request.intent.slots.response.value == 'yes') {
-			this.emit('AMAZON.YesIntent');
+
+
 		}
 
 
@@ -267,10 +272,10 @@ function saveQuizScore(callback) {
 
 }
 
-function getQuizSubscription(callback) {
+function getQuizSubscription(id, callback) {
 
 	var post_data = {
-		"quiz_id": "1"
+		"quiz_id": id
 	}
 	console.log("getQuizSubscription");
 	var post_options = {
