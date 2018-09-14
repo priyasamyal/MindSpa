@@ -2,13 +2,14 @@
 const config = {
   access_token: '',
   user_detail: {},
-  INTRO_MSG: "<prosody rate='96%'> <break time='200ms'/>  welcome to Mind Spa. Mind reflects a person's ability to think and reason. It’s the most powerful element of human beings that enables them to be aware of the world and its experiences. <break time='200ms'/>   Mind Spa can help you use your mind more effectively and become more mindful. Here are some interesting facts about the power of  mind .</prosody>",
+  INTRO_MSG: " <break time='200ms'/>  welcome to Mind Spa. Mind reflects a person's ability to think and reason. It’s the most powerful element of human beings that enables them to be aware of the world and its experiences. <break time='200ms'/>   Mind Spa can help you use your mind more effectively and become more mindful. Here are some interesting facts about the power of  mind .",
   INTRO_REPROMPT: '<prosody rate="92%">I am still waiting. Are you ready for the test? </prosody>',
-  ask_for_test: "<prosody rate='96%'> we recommend you choose <break time='300ms'/> one or more of our experiential learning programmes. Please speak the program you want to opt for <break time='300ms'/> Anger Management <break time='300ms'/> Stress Management <break time='300ms'/> Boost Self- Confidence. </prosody>",
+  ask_for_test: "we recommend you choose <break time='300ms'/> one or more of our experiential learning programmes. Please speak the program you want to opt for <break time='300ms'/> Anger Management <break time='300ms'/> Stress Management <break time='300ms'/> Boost Self- Confidence. ",
   STOP_MSG: 'Thank you for using Mind Spa. I hope i have made a difference in your life. Whenever you are confused about mind, just Remember me.',
   SUBSCRIBE_MSG: "",
   ANGER_INTRO: "<prosody rate='96%'>Anger is a normal, healthy emotion. It becomes unhealthy when it flares up all the time or spirals out of control.  </prosody>",
-
+  CONFIDENCE_INTRO: "<prosody rate='96%'>Self confidence is elemental to your success. You become what you believe and practise. your ability to succeed in any situation depends primarily on your self confidence.</prosody>",
+  STRESS_INTRO: "<prosody rate='96%'>Stress management is a wide spectrum of techniques and psychotherapy aimed at controlling a person's level of stress </prosody>",
 
   SKILL_NAME: 'Therapist',
   EVENT: {},
