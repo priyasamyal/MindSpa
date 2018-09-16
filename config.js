@@ -17,6 +17,13 @@ const config = {
   CURRENT_INDEX: 0,
   SCORE_CARD: { "quiz": [] },
   FEEDBACK: '',
+
+  behaviour_index: 0,
+  behaviour_tip: [],
+  behaviour_quiz_id: 1,
+
+  Stress_tip: '',
+  Confidence_tip: '',
   // RANDOM_NO: '',
   // HANDLE_TEST_NO_launch: "No problem, I have some audios and techniques to calm you down .To listen to anger management  techniques just say, “Calm me down” or to play audios just say “Play audio”. Or Stop to end this session'",
   // HANDLE_TEST_NO_AUDIO: "No problem, I have  techniques to calm you down and a test to see how much are you in control .To listen to anger management  techniques just say, “Calm me down” or to start test just say “Start test”. Or Stop to end this session'",

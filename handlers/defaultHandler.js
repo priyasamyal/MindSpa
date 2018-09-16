@@ -108,7 +108,7 @@ const defaultHandler = {
 
   'AMAZON.YesIntent': function () {
     console.log('YesIntent called...', this.attributes['CURRENT_STEP']);
-    if (this.attributes['CURRENT_STEP'] == 'ask_for_anger') {
+    if (this.attributes['CURRENT_STEP'] == 'ask_for_anger' || this.attributes['CURRENT_STEP'] == 'ask_for_confidence' || this.attributes['CURRENT_STEP'] == 'ask_for_stress') {
       this.emit('quizResponse');
     }
     else if (this.attributes['CURRENT_STEP'] == 'anger_test_over') {
