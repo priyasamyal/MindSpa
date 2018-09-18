@@ -5,81 +5,133 @@ const mainHandler = {
 
 	/** first intent to call */
 	'LaunchRequest': function () {
+		if (config.access_token == '' || config.access_token == undefined) {
+			this.response.cardRenderer("Hi, Welcome to  Mind Spa. Your account has not been linked with Mind Spa. Please go to your  alexa app and enable the account link option for Mind Spa skill ");
+			this.response.speak("Hi, Welcome to  Mind Spa. Your account has not been linked with Mind Spa. Please go to your  alexa app and enable the account link option for Mind Spa skill ");
+			this.emit(':responseReady');
+		}
+		else {
+			getUserData(myResult => {
+				var index = Math.floor(Math.random() * Math.floor(quiz.mind_fact.length - 1));
+				console.log(index);
+				console.log('LaunchRequestIntent called...', "result", myResult.quizzes['Anger']);
+				this.attributes['CURRENT_STEP'] = 'launch';
+				config.CURRENT_INDEX = 0;
 
-		getUserData(myResult => {
-			var index = Math.floor(Math.random() * Math.floor(quiz.mind_fact.length - 1));
-			console.log(index);
-			console.log('LaunchRequestIntent called...', "result", myResult.quizzes['Anger']);
-			this.attributes['CURRENT_STEP'] = 'launch';
-			config.CURRENT_INDEX = 0;
+				if (myResult.tips.length > 0) {
+					config.behaviour_tip = myResult.tips;
+					config.unsubscribed_quizzes = myResult.unsubscribed_quizzes;
+					console.log(config.unsubscribed_quizzes, "config.unsubscribed_quizzes");
+					if (config.unsubscribed_quizzes.length > 0) {
+						console.log("length greater that 1");
+						config.unsubscribed_msg = "You can also try our other experiential learning programmes like . "
+						config.unsubscribed_quizzes.map(res => {
+							if (res == "Anger") {
+								config.unsubscribed_msg += " Anger Management by saying <break time='300ms'/> Anger Management"
+							}
+							if (res == "Confidence") {
+								config.unsubscribed_msg += "<break time='300ms'/>  Boosting Self confidence  just by saying <break time='300ms'/> Boost Self Confidence"
+							}
+							if (res == "Stress") {
+								config.unsubscribed_msg += "<break time='300ms'/> Stress management  by saying <break time='300ms'/> Stress management"
+							}
+						})
+						config.unsubscribed_msg += " <break time='300ms'/>or to end the session, say  <break time='200ms'/> Stop"
 
-			if (myResult.tips.length > 0) {
-				config.behaviour_tip = myResult.tips;
-				var sayTip = "";
-				myResult.tips.map(res => {
-					if (res.quiz_id == 1) {
-						sayTip += "Your Todays Tip on Anger Management is <break time='200ms'/> " + res.tip_description + " <break time='300ms'/> I hope you'll  practise this in your daily life.";
-						console.log(res.behaviour.quiz_id, "res.behaviour.quiz_id");
+						console.log(config.unsubscribed_msg, "config.unsubscribed_msg");
+					}
+					var sayTip = "";
+					myResult.tips.map(res => {
+						if (res.quiz_id == 1) {
+							sayTip += "Your Todays Tip on Anger Management is <break time='300ms'/> " + res.tip_description + " <break time='300ms'/> I hope you'll  practise this in your daily life.";
+							console.log(res.behaviour.quiz_id, "res.behaviour.quiz_id");
 
-						if (res.behaviour.quiz_id != undefined) {
-							config.behaviour_index = config.behaviour_index + 1;
-							this.attributes['CURRENT_STEP'] = 'tip_behaviour';
-							config.behaviour_quiz_id = res.behaviour.quiz_id;
-							sayTip += " <break time='400ms'/>   Mind Spa would like to rate your anger behaviour across the day <break time='300ms'/> " + res.behaviour.question + "<break time='200ms'/>  " + res.behaviour.options[0] + "<break time='200ms'/>  " + res.behaviour.options[1] + "<break time='200ms'/>  " + res.behaviour.options[2];
+							if (res.behaviour.quiz_id != undefined) {
+								config.behaviour_index = config.behaviour_index + 1;
+								this.attributes['CURRENT_STEP'] = 'tip_behaviour';
+								config.behaviour_quiz_id = res.behaviour.quiz_id;
+								sayTip += " <break time='400ms'/>   Mind Spa would like to rate your anger behaviour across the day <break time='300ms'/> " + res.behaviour.question + "<break time='300ms'/> Your options are <break time='200ms'/> " + res.behaviour.options[0] + "<break time='200ms'/>  " + res.behaviour.options[1] + "<break time='200ms'/>  " + res.behaviour.options[2];
 
-							this.emit(':ask', " <prosody rate='92%'> Hello " + config.user_detail.full_name + "<break time='200ms'/>Welcome back <break time='200ms'/> " + config.Stress_tip + "<break time='300ms'/> " + config.Confidence_tip + " <break time='200ms' />" + sayTip + " <break time='300ms'/> </prosody>");
+								this.emit(':ask', " <prosody rate='92%'> Hello, " + config.user_detail.full_name + "<break time='200ms'/>Welcome back <break time='200ms'/> " + config.Stress_tip + "<break time='300ms'/> " + config.Confidence_tip + " <break time='200ms' />" + sayTip + " <break time='300ms'/> </prosody>");
 
-						}
-
-					} else if (res.quiz_id == 2) {
-						console.log("Self confidence", sayTip, config.Stress_tip);
-
-						config.Confidence_tip = "Your todays Tip on Boosting self confidence is <break time='200ms'/> " + res.tip_description + "<break time='200ms'/>  I hope you'll  practise this in your daily life. "
-
-						if (res.behaviour.quiz_id != undefined) {
-							config.behaviour_index = config.behaviour_index + 1;
-							this.attributes['CURRENT_STEP'] = 'tip_behaviour';
-							config.behaviour_quiz_id = res.behaviour.quiz_id;
-							config.Confidence_tip += " <break time='400ms'/>   Mind Spa would like to rate your self confidence across the day <break time='300ms'/> " + res.behaviour.question + "<break time='200ms'/>  " + res.behaviour.options[0] + "<break time='200ms'/>  " + res.behaviour.options[1] + "<break time='200ms'/>  " + res.behaviour.options[2];
-							console.log("Self confidence config.Confidence_tip", config.Confidence_tip);
-							if (sayTip == '' && config.Stress_tip == '') {
-								this.emit(':ask', " <prosody rate='92%'> Hello " + config.user_detail.full_name + "<break time='200ms'/>Welcome back  <break time='300ms'/>  " + config.Confidence_tip + " <break time='300ms'/> </prosody>");
-							} else if (sayTip != '' && config.Stress_tip == '') {
-								this.emit(':ask', " <prosody rate='92%'> Hello " + config.user_detail.full_name + "<break time='200ms'/>Welcome back  <break time='200ms'/> " + sayTip + " <break time='400ms'/>  " + config.Confidence_tip + " <break time='300ms'/> </prosody>");
-							} else if (sayTip == '' && config.Stress_tip != '') {
-								this.emit(':ask', " <prosody rate='92%'> Hello " + config.user_detail.full_name + "<break time='200ms'/>Welcome back  <break time='300ms'/>  " + config.Stress_tip + "<break time='300ms'/>  " + config.Confidence_tip + " <break time='300ms'/> </prosody>");
-							} else {
-								this.emit(':ask', " <prosody rate='92%'> Hello " + config.user_detail.full_name + "<break time='200ms'/>Welcome back  <break time='200ms'/> " + "sayTip" + "<break time='300ms'/>  " + "config.Stress_tip" + "<break time='300ms'/>  " + config.Confidence_tip + " <break time='300ms'/> </prosody>");
 							}
 
+						} else if (res.quiz_id == 2) {
+							console.log("Self confidence", sayTip, config.Stress_tip);
 
+							config.Confidence_tip = "Your todays Tip on Boosting self confidence is <break time='200ms'/> " + res.tip_description + "<break time='200ms'/>  I hope you'll  practise this in your daily life. "
+
+							if (res.behaviour.quiz_id != undefined) {
+								config.behaviour_index = config.behaviour_index + 1;
+								this.attributes['CURRENT_STEP'] = 'tip_behaviour';
+								config.behaviour_quiz_id = res.behaviour.quiz_id;
+								config.Confidence_tip += " <break time='400ms'/>   Mind Spa would like to rate your self confidence across the day <break time='300ms'/> " + res.behaviour.question + "<break time='200ms'/>  Your options are <break time='300ms'/>   " + res.behaviour.options[0] + "<break time='200ms'/>  " + res.behaviour.options[1] + "<break time='200ms'/>  " + res.behaviour.options[2];
+								console.log("Self confidence config.Confidence_tip", config.Confidence_tip);
+								if (sayTip == '' && config.Stress_tip == '') {
+									this.emit(':ask', " <prosody rate='92%'> Hello, " + config.user_detail.full_name + "<break time='200ms'/>Welcome back  <break time='300ms'/>  " + config.Confidence_tip + " <break time='300ms'/> </prosody>");
+								} else if (sayTip != '' && config.Stress_tip == '') {
+									this.emit(':ask', " <prosody rate='92%'> Hello, " + config.user_detail.full_name + "<break time='200ms'/>Welcome back  <break time='200ms'/> " + sayTip + " <break time='400ms'/>  " + config.Confidence_tip + " <break time='300ms'/> </prosody>");
+								} else if (sayTip == '' && config.Stress_tip != '') {
+									this.emit(':ask', " <prosody rate='92%'> Hello, " + config.user_detail.full_name + "<break time='200ms'/>Welcome back  <break time='300ms'/>  " + config.Stress_tip + "<break time='300ms'/>  " + config.Confidence_tip + " <break time='300ms'/> </prosody>");
+								} else {
+									this.emit(':ask', " <prosody rate='92%'> Hello, " + config.user_detail.full_name + "<break time='200ms'/>Welcome back <break time='300ms'/>  " + config.Confidence_tip + " <break time='300ms'/> </prosody>");
+								}
+
+
+							}
+						} else {
+
+							config.Stress_tip = " Your todays Tip on Stress management is <break time='200ms'/> " + res.tip_description + "<break time='200ms'/> I hope you'll  practise this in your daily life. "
+
+							if (res.behaviour.quiz_id != undefined) {
+
+								this.attributes['CURRENT_STEP'] = 'tip_behaviour';
+								console.log("come in stress section1");
+								config.behaviour_quiz_id = res.behaviour.quiz_id;
+								config.behaviour_index = config.behaviour_index + 1;
+								config.Stress_tip += " <break time='400ms'/>   Mind Spa would like to rate your stress across the day <break time='300ms'/> " + res.behaviour.question + "<break time='200ms'/>  Your options are <break time='300ms'/>  " + res.behaviour.options[0] + "<break time='200ms'/>  " + res.behaviour.options[1] + "<break time='200ms'/>  " + res.behaviour.options[2];
+
+								if (sayTip == '' && config.Confidence_tip == '') {
+
+									this.emit(':ask', " <prosody rate='92%'> Hello, " + config.user_detail.full_name + "<break time='200ms'/>Welcome back  <break time='300ms'/>  " + config.Stress_tip + " <break time='300ms'/> </prosody>");
+								} else if (sayTip != '' && config.Confidence_tip == '') {
+
+									this.emit(':ask', " <prosody rate='92%'> Hello, " + config.user_detail.full_name + "<break time='200ms'/>Welcome back  <break time='200ms'/> " + sayTip + " <break time='400ms'/>  " + config.Stress_tip + " <break time='300ms'/> </prosody>");
+								} else if (sayTip == '' && config.Confidence_tip != '') {
+
+									this.emit(':ask', " <prosody rate='92%'> Hello, " + config.user_detail.full_name + "<break time='200ms'/>Welcome back  <break time='300ms'/>  " + config.Confidence_tip + "<break time='300ms'/>  " + config.Stress_tip + " <break time='300ms'/> </prosody>");
+								} else {
+									this.emit(':ask', " <prosody rate='92%'> Hello, " + config.user_detail.full_name + "<break time='200ms'/>Welcome back  <break time='300ms'/>  " + sayTip + " <break time='400ms'/>  " + config.Confidence_tip + "<break time='300ms'/>  " + config.Stress_tip + " <break time='300ms'/> </prosody>");
+								}
+
+								// if (sayTip == '' && config.Confidence_tip == '') {
+
+								// 	this.emit(':ask', " <prosody rate='92%'> Hello, " + config.user_detail.full_name + "<break //time='200ms'/>Welcome back  <break time='300ms'/>  " + config.Stress_tip + " <break time='300ms'/> </prosody>");
+								// } else if (sayTip != '' && config.Confidence_tip == '') {
+
+								// 	this.emit(':ask', " <prosody rate='92%'> Hello, " + config.user_detail.full_name + "<break time='200ms'/>Welcome back  <break time='200ms'/> " + sayTip + " <break time='400ms'/>  " + config.Confidence_tip + " <break time='300ms'/> </prosody>");
+								// } else if (sayTip == '' && config.Confidence_tip != '') {
+
+								// 	this.emit(':ask', " <prosody rate='92%'> Hello, " + config.user_detail.full_name + "<break time='200ms'/>Welcome back  <break time='300ms'/>  " + config.Stress_tip + "<break time='300ms'/>  " + config.Confidence_tip + " <break time='300ms'/> </prosody>");
+								// } else {
+
+								// 	this.emit(':ask', "<prosody rate='92%'> Hello, " + config.user_detail.full_name + "<break time='200ms'/>Welcome back <break time='200ms'/> " + config.Stress_tip + "</prosody>");
+								// }
+
+							}
 						}
-					} else {
-						console.log("come in stress section");
-						config.Stress_tip = " Your todays Tip on Stress management is <break time='200ms'/> " + res.tip_description + "<break time='200ms'/> I hope you'll  practise this in your daily life. "
+					})
+					console.log("simple call");
+					this.emit(':ask', " <prosody rate='92%'> Hello,  " + config.user_detail.full_name + "<break time='200ms'/>Welcome back <break time='300ms'/> " + sayTip + " <break time='300ms'/>" + config.Confidence_tip + " <break time='300ms'/> " + config.Stress_tip + " <break time='400ms'/>  " + config.unsubscribed_msg + " </prosody>")
 
-						if (res.behaviour.quiz_id != undefined) {
-							this.attributes['CURRENT_STEP'] = 'tip_behaviour';
-							console.log("come in stress section1");
-							config.behaviour_quiz_id = res.behaviour.quiz_id;
-							config.behaviour_index = config.behaviour_index + 1;
-							config.Stress_tip += " <break time='400ms'/>   Mind Spa would like to rate your self confidence across the day <break time='300ms'/> " + res.behaviour.question + "<break time='200ms'/>  " + res.behaviour.options[0] + "<break time='200ms'/>  " + res.behaviour.options[1] + "<break time='200ms'/>  " + res.behaviour.options[2];
-							console.log("come in stress section2", sayTip, config.Confidence_tip);
-							// this.emit(":ask", "<prosody rate = '92%'>Hello " + config.user_detail.full_name + " <break time='200ms'/>Welcome back <break time=200ms'/> " + sayTip + "</prosody>");
-							this.emit(':ask', "<prosody rate='92%'> Hello " + config.user_detail.full_name + "<break time='200ms'/>Welcome back <break time='200ms'/> " + sayTip + "<break time='300ms'/>  " + config.Stress_tip + "</prosody>");
-						}
-					}
-				})
-				this.emit(':tell', " <prosody rate='92%'> Hello " + config.user_detail.full_name + "<break time='200ms'/>Welcome back " + sayTip + " <break time='300ms'/>" + config.Confidence_tip + " <break time='300ms'/> " + config.Stress_tip + "</prosody>")
+				}
 
-			}
+				else {
+					this.emit(':ask', " <prosody rate='92%'> Hello, " + config.user_detail.full_name + config.INTRO_MSG + " <break time='400ms'/>" + quiz.mind_fact[0] + "<break time='400ms'/> " + quiz.mind_fact[1] + "<break time='400ms'/> " + quiz.mind_fact[2] + "<break time='400ms'/> Now you have an idea how powerful mind is, and what it can accomplish. To experience its power  " + config.ask_for_test + "</prosody>", config.ask_for_test);
+				}
 
-			else {
-				this.emit(':ask', " <prosody rate='92%'> Hello " + config.user_detail.full_name + config.INTRO_MSG + " <break time='400ms'/>" + quiz.mind_fact[index] + "<break time='400ms'/> " + quiz.mind_fact[index + 1] + "<break time='400ms'/>   Now you have an idea how powerful mind is, and what it can accomplish. To experience its power  " + config.ask_for_test + "</prosody>", config.ask_for_test);
-			}
-
-		})
-
+			})
+		}
 	},
 
 	'quizTypes': function () {
@@ -88,21 +140,21 @@ const mainHandler = {
 		if (config.EVENT.request.intent.slots.options.resolutions.resolutionsPerAuthority[0].status.code == 'ER_SUCCESS_MATCH' && config.EVENT.request.intent.slots.options.resolutions.resolutionsPerAuthority[0].values[0].value.name == "Anger management") {
 			this.attributes['CURRENT_STEP'] = 'ask_for_anger';
 			console.log('Anger management opted...');
-			this.emit(":ask", config.ANGER_INTRO + " <break time='200ms'/> You can subscribe to our tips on Anger Management. If you want Mind Spa to send you the daily tips on Anger Management and to keep track of your behaviour, then say  <break time='200ms'/> Yes  <break time='200ms'/>or to skip this option say  <break time='200ms'/> skip ")
+			this.emit(":ask", config.ANGER_INTRO + " <break time='200ms'/> You can subscribe to our tips on Anger Management. If you want Mind Spa to send you daily tips on Anger Management and to keep track of your behaviour, then say  <break time='200ms'/> Yes  <break time='200ms'/>or to skip this option say  <break time='200ms'/> skip ")
 			//this.emit("startQuiz");
 		}
 
 		else if (config.EVENT.request.intent.slots.options.resolutions.resolutionsPerAuthority[0].status.code == 'ER_SUCCESS_MATCH' && config.EVENT.request.intent.slots.options.resolutions.resolutionsPerAuthority[0].values[0].value.name == "Boost self confidence") {
 			this.attributes['CURRENT_STEP'] = 'ask_for_confidence';
 			console.log('Boost self confidence opted...', quiz.confidence_quiz);
-			this.emit(":ask", config.CONFIDENCE_INTRO + " <break time='200ms'/> You can subscribe to our tips on Self Confidence. If you want Mind Spa to send you the daily tips on boosting self confidence and to keep track of your behaviour, then say  <break time='200ms'/> Yes  <break time='200ms'/> or to skip this option say  <break time='200ms'/> skip ")
+			this.emit(":ask", config.CONFIDENCE_INTRO + " <break time='200ms'/> You can subscribe to our tips on Self Confidence. If you want Mind Spa to send you  daily tips on boosting self confidence and to keep track of your behaviour, then say  <break time='200ms'/> Yes  <break time='200ms'/> or to skip this option say  <break time='200ms'/> skip ")
 			//	this.emit("startQuiz");
 
 		} else if (config.EVENT.request.intent.slots.options.resolutions.resolutionsPerAuthority[0].status.code == 'ER_SUCCESS_MATCH' && config.EVENT.request.intent.slots.options.resolutions.resolutionsPerAuthority[0].values[0].value.name == "Stress Management") {
 
 			this.attributes['CURRENT_STEP'] = 'ask_for_stress';
 			console.log('Stress Management opted...');
-			this.emit(":ask", config.STRESS_INTRO + " <break time='200ms'/> You can subscribe to our tips on Stress Management. If you want Mind Spa to send you the daily tips on Stress Management and to keep track of your behaviour, then say  <break time='200ms'/> Yes  <break time='200ms'/> or to skip this option say  <break time='200ms'/> skip ");
+			this.emit(":ask", config.STRESS_INTRO + " <break time='200ms'/> You can subscribe to our tips on Stress Management. If you want Mind Spa to send you  daily tips on Stress Management and to keep track of your behaviour, then say  <break time='200ms'/> Yes  <break time='200ms'/> or to skip this option say  <break time='200ms'/> skip ");
 			//this.emit("startQuiz");
 		}
 	},
@@ -123,7 +175,7 @@ const mainHandler = {
 			tip = quiz.confidenceTips[index].tip;
 		}
 		if (this.attributes['CURRENT_STEP'] == 'ask_for_anger' || this.attributes['CURRENT_STEP'] == 'ask_for_confidence' || this.attributes['CURRENT_STEP'] == 'ask_for_stress') {
-			this.emit(':tell', '<prosody rate="92%">No problem, In case you change your mind later on. Remember  Mind spa is always there to help you with your ' + type + '. Here is  a complementary tip for you ' + tip + "  <break time='200ms'/>  I hope you will practise this tip. Thank you </prosody>");
+			this.emit(':tell', '<prosody rate="92%">No problem, In case you change your mind later on. Remember  Mind spa is always there to help you with your ' + type + '.  <break time="300ms"/> Here is  a complementary tip for you <break time="400ms"/>  ' + tip + "  <break time='200ms'/>  I hope you will practise this tip. Thank you </prosody>");
 		}
 	},
 
@@ -135,30 +187,30 @@ const mainHandler = {
 			findOptions(result => {
 				var intro_msg = "";
 				if (config.CURRENT_INDEX == 0) {
-					intro_msg = "<prosody rate='92%'>It's always good to know how much deep inside the  water. <break time='200ms'/>you are so <break time='300ms'/>to measure your temperament. <break time='200ms'/>let's have a small quiz  <break time='400ms'/></prosody>"
+					intro_msg = "Thanks for subscribing to this program. <break time='200ms'/> Anger is an unnecessary emotion. Loads of stuff in life can trigger it, but what matters is how you react <break time='400ms'/>  To measure your Anger Level <break time='400ms'/>let's have a small quiz <break time='700ms'/>"
 				}
 				console.log(result, "result");
-				this.emit(':ask', intro_msg + result, "I'm still waiting for your reply. Repeating the current question" + result);
+				this.emit(':ask', "<prosody rate='92%'>" + intro_msg + result + "</prosody>", "I'm still waiting for your reply. Repeating the current question" + result);
 			})
 		}
 		else if (this.attributes['CURRENT_STEP'] == 'confidence_test') {
 			findOptions(result => {
 				var intro_msg = "";
 				if (config.CURRENT_INDEX == 0) {
-					intro_msg = "<prosody rate='92%'>Confidence is a key element  in building a person perception. Lack of it will have a negative impact. to measure yours,  here is a small quiz  <break time='400ms'/> </prosody> "
+					intro_msg = "<prosody rate='92%'> Thanks for subscribing to this program. <break time='200ms'/> Confidence is a key element  in building a person perception. Lack of it will have a negative impact. to measure yours,  here is a small quiz  <break time='500ms'/> </prosody> "
 				}
 				console.log(result, "result");
-				this.emit(':ask', intro_msg + result, "I'm still waiting for your reply. Repeating the current question" + result);
+				this.emit(':ask', "<prosody rate='92%'>" + intro_msg + result + "</prosody>", "I'm still waiting for your reply. Repeating the current question" + result);
 			})
 		}
 		else if (this.attributes['CURRENT_STEP'] == 'stress_test') {
 			findOptions(result => {
 				var intro_msg = "";
 				if (config.CURRENT_INDEX == 0) {
-					intro_msg = "<prosody rate='92%'>Stress can exacerbate many serious health problems. Let’s checkout your current stress level by taking a small quiz and then we will move ahead. <break time='400ms'/> </prosody>"
+					intro_msg = "<prosody rate='92%'> Thanks for subscribing to this program. <break time='200ms'/>Stress can exacerbate many serious health problems. Let’s checkout your current stress level by taking a small quiz and then we will move ahead. <break time='500ms'/> </prosody>"
 				}
 				console.log(result, "result");
-				this.emit(':ask', intro_msg + result, "I'm still waiting for your reply. Repeating the current question" + result);
+				this.emit(':ask', "<prosody rate='92%'>" + intro_msg + result + "</prosody>", "I'm still waiting for your reply. Repeating the current question" + result);
 			})
 		}
 	},
@@ -205,7 +257,7 @@ const mainHandler = {
 					}
 
 				} else {
-					this.emit(':ask', "<prosody rate='92%'> Thanks for your response. Keep practising Mind Spa tips. We hope to make a difference in your life. You can try our other experiential learning programmes like anger management by saying <break time='300ms'/>  Anger Management or for Stress Management  say <break time='300ms'/>  Stress management <break time='300ms'/> or for boosting self confidence say <break time='300ms'/>  Boost self confidence <break time='300ms'/>  or  to stop this session say <break time='300ms'/>  stop  </prosody>");
+					this.emit(':ask', "<prosody rate='92%'> Thanks for your response. Keep practising Mind Spa tips.<break time='300ms'/>  We hope to make a difference in your life. <break time='400ms'/>  " + config.unsubscribed_msg + "</prosody>");
 				}
 			})
 		}
@@ -220,12 +272,19 @@ const mainHandler = {
 					saveQuizScore(result => {
 						config.CURRENT_INDEX = 0;
 						console.log(result, "Quiz result");
-						if (result.average > 1) {
-							this.emit(':ask', "<prosody rate='90%'> Well, Your stress level seems to be good, based on your responses. here is your first tip on stress management <break time='300ms'/> " + tip + " <break time='300ms'/> Though you can always try our other programmes like Anger Management by saying  <break time='200ms'/> anger management  or for Boosting self confidence say  <break time='200ms'/>Boost Self Confidence or to stop the session say  <break time='200ms'/> STOP </prosody>");
+
+						if (result.average_score == 1) {
+							config.CURRENT_INDEX = 0;
+							this.emit(':ask', "<prosody rate='92%'> Thank you for taking the quiz. Based on your responses, your stress level seems to be Severe <break time='300ms'/>  but you need not to worry. Mind spa can help you control it by sending you some practice tips, motivational stories, hypothetical cases and monitor your progress at regular intervals.  <break time='300ms'/> here is your first tip on stress management  <break time='500ms'/> " + tip + " <break time='500ms'/> MindSpa currently offers other programmes like Boosting Self confidence and Anger management. To subscribe,  say <break time='300ms'/>  Boost self confidence or <break time='300ms'/> Anger Management. To end, Say <break time='300ms'/>  Stop.</prosody>", "Please speak to select your option?");
+						}
+						else if (result.average_score == 2) {
+							this.emit(':ask', "<prosody rate='92%'> Thank you for taking the quiz. Based on your responses, your stress level seems to be Medium <break time='300ms'/>  but you need not to worry. Mind spa can help you control it by sending you some practice tips, motivational stories, hypothetical cases and monitor your progress at regular intervals.  <break time='300ms'/> here is your first tip on stress management  <break time='500ms'/> " + tip + " <break time='500ms'/> MindSpa currently offers other programmes like Boosting Self confidence and Anger management. To subscribe,  say <break time='300ms'/>  Boost self confidence or <break time='300ms'/> Anger Management. To end, Say <break time='300ms'/>  Stop.</prosody>", "Please speak to select your option?");
 						}
 						else {
-							this.emit(':ask', "<prosody rate='90%'> Thank you for taking the quiz. Based on your responses, you suppose to have a high stress level. but you need not to worry about it. Mind spa will help you control it by telling you some tips and stories and monitoring your progress at regular intervals. here is your first tip on boosting self confidence  <break time='300ms'/>" + tip + " Though you can always try our other programmes like Anger Management by saying  <break time='200ms'/> anger management  or for Boosting self confidence say  <break time='200ms'/>Boost Self Confidence or to stop the session say  <break time='200ms'/> STOP   </prosody>", "Please speak to select your option?");
+							this.emit(':ask', "<prosody rate='92%'> Thank you for taking the quiz. Well, based on your responses, Your stress level seems to be normal  <break time='300ms'/> . But still Mind spa will send you some practice tips, motivational stories, hypothetical cases and monitor your progress at regular intervals.  <break time='300ms'/>. here is your first tip on stress management  <break time='500ms'/> " + tip + " <break time='500ms'/>  MindSpa currently offers other programmes like Self confidence boosting and Anger management. To subscribe,  say <break time='300ms'/>  Boost self confidence or <break time='300ms'/> Anger Management”. To end, Say <break time='300ms'/>  Stop.</prosody>", "Please speak to select your option?");
 						}
+
+
 						config.SCORE_CARD["quiz"] = [];
 
 					})
@@ -235,7 +294,7 @@ const mainHandler = {
 					console.log(result, "score till now.");
 				})
 				findOptions(result => {
-					this.emit(':ask', result, "I'm still waiting for your reply. Repeating the current question" + result);
+					this.emit(':ask', "<prosody rate='92%'>" + result + "</prosody>", "I'm still waiting for your reply. Repeating the current question" + result);
 				})
 			}
 
@@ -249,13 +308,17 @@ const mainHandler = {
 					console.log(config.SCORE_CARD, "SCORE_CARD");
 					saveQuizScore(result => {
 						console.log(result, "Quiz result");
-						if (result.average > 1) {
+						if (result.average_score == 1) {
 							config.CURRENT_INDEX = 0;
-							this.emit(':ask', "<prosody rate='90%'> Well, Your confidence level seems to be good, based on your responses. here is your first tip on boosting self confidence <break time='300ms'/> " + tip + "  <break time='300ms'/> Though you can always try our other programmes like Anger Management by saying  <break time='200ms'/> anger management  or for Boosting self confidence say  <break time='200ms'/>Boost Self Confidence or to stop the session say  <break time='200ms'/> STOP </prosody>");
+							this.emit(':ask', "<prosody rate='92%'> Thank you for taking the quiz. Based on your responses, your confidence level seems to be Severe <break time='300ms'/>  but you need not to worry. Mind spa can help you control it by sending you some practice tips, motivational stories, hypothetical cases and monitor your progress at regular intervals.  <break time='300ms'/> here is your first tip on boosting self confidence  <break time='500ms'/> " + tip + " <break time='500ms'/> MindSpa currently offers other programmes like Stress Management and Anger management. To subscribe,  say <break time='300ms'/>  Stress management or <break time='300ms'/> Anger Management. To end, Say <break time='300ms'/>  Stop.</prosody>", "Please speak to select your option?");
+						}
+						else if (result.average_score == 2) {
+							this.emit(':ask', "<prosody rate='92%'> Thank you for taking the quiz. Based on your responses, your confidence level seems to be Medium <break time='300ms'/>  but you need not to worry. Mind spa can help you control it by sending you some practice tips, motivational stories, hypothetical cases and monitor your progress at regular intervals.  <break time='300ms'/> here is your first tip on boosting self confidence  <break time='500ms'/> " + tip + " <break time='500ms'/> MindSpa currently offers other programmes like Stress Management and Anger Management. To subscribe,  say <break time='300ms'/>  Stress management or <break time='300ms'/> Anger Management”. To end, Say <break time='300ms'/>  Stop.</prosody>", "Please speak to select your option?");
 						}
 						else {
-							this.emit(':ask', "<prosody rate='90%'> Thank you for taking the quiz. Based on your responses, you suppose to have a high temperament. but you need not to worry about it. Mind spa will help you control it by telling you some tips and stories and monitoring your progress at regular intervals. here is your first tip on boosting self confidence  <break time='300ms'/>" + tip + " Though you can always try our other programmes like Anger Management by saying  <break time='200ms'/> anger management  or for stress management say  <break time='200ms'/>Stress management or to stop the session say  <break time='200ms'/> STOP   </prosody>", "Please speak to select your option?");
+							this.emit(':ask', "<prosody rate='92%'> Thank you for taking the quiz. Well, based on your responses, Your confidence level seems to be normal  <break time='300ms'/> . But still Mind spa will send you some practice tips, motivational stories, hypothetical cases and monitor your progress at regular intervals.  <break time='300ms'/>. here is your first tip on anger management  <break time='500ms'/> " + tip + " <break time='500ms'/>  MindSpa currently offers other programmes like Stress Management and Anger management. To subscribe,  say <break time='300ms'/>  Stress management or <break time='300ms'/> Anger Management”. To end, Say <break time='300ms'/>  Stop.</prosody>", "Please speak to select your option?");
 						}
+
 						config.SCORE_CARD["quiz"] = [];
 
 					})
@@ -265,7 +328,7 @@ const mainHandler = {
 					console.log(result, "score till now.");
 				})
 				findOptions(result => {
-					this.emit(':ask', result, "I'm still waiting for your reply. Repeating the current question" + result);
+					this.emit(':ask', "<prosody rate='92%'>" + result + "</prosody>", "I'm still waiting for your reply. Repeating the current question" + result);
 				})
 			}
 		}
@@ -279,11 +342,17 @@ const mainHandler = {
 					saveQuizScore(result => {
 						config.CURRENT_INDEX = 0;
 						console.log(result, "Quiz result");
-						if (result.average > 1) {
-							this.emit(':ask', "<prosody rate='90%'> Well, Your temperament seems to be good, based on your responses. here is your first tip on anger management  <break time='300ms'/>" + tip + "  <break time='300ms'/> Though you can always try our other programmes like Stress Management by saying  <break time='200ms'/> Stress management  or for Boosting self confidence say  <break time='200ms'/>Boost Self Confidence or to stop the session say  <break time='200ms'/> STOP </prosody>", "Please speak to select your option?");
+						if (result.average_score == 1) {
+							this.emit(':ask', "<prosody rate='92%'> Thank you for taking the quiz. Based on your responses, your anger level seems to be Severe <break time='300ms'/>  but you need not to worry. Mind spa can help you control it by sending you some practice tips, motivational stories, hypothetical cases and monitor your progress at regular intervals.  <break time='300ms'/> here is your first tip on anger management  <break time='500ms'/> " + tip + " <break time='500ms'/> MindSpa currently offers other programmes like Stress Management and self confidence boosting. To subscribe,  say <break time='300ms'/>  “Boost Self Confidence” or <break time='300ms'/> Stress Management”. To end, Say <break time='300ms'/>  Stop.</prosody>", "Please speak to select your option?");
+
+
+
+							// this.emit(':ask', "<prosody rate='90%'> Well, Your temperament seems to be good, based on your responses. here is your first tip on anger management  <break time='300ms'/>" + tip + "  <break time='300ms'/> Though you can always try our other programmes like Stress Management by saying  <break time='200ms'/> Stress management  or for Boosting self confidence say  <break time='200ms'/>Boost Self Confidence or to stop the session say  <break time='200ms'/> STOP </prosody>", "Please speak to select your option?");
+						} else if (result.average_score == 2) {
+							this.emit(':ask', "<prosody rate='92%'> Thank you for taking the quiz. Based on your responses, your anger level seems to be Medium <break time='300ms'/>  but you need not to worry. Mind spa can help you control it by sending you some practice tips, motivational stories, hypothetical cases and monitor your progress at regular intervals.  <break time='300ms'/> here is your first tip on anger management  <break time='500ms'/> " + tip + " <break time='500ms'/> MindSpa currently offers other programmes like Stress Management and self confidence boosting. To subscribe,  say <break time='300ms'/>  “Boost Self Confidence” or <break time='300ms'/> Stress Management”. To end, Say <break time='300ms'/>  Stop.</prosody>", "Please speak to select your option?");
 						}
 						else {
-							this.emit(':ask', "<prosody rate='90%'> Thank you for taking the quiz. Based on your responses, you suppose to have a high temperament. but you need not to worry about it. Mind spa will help you control it by telling you some tips and stories and monitoring your progress at regular intervals. here is your first tip on anger management  <break time='300ms'/> " + tip + " <break time='300ms'/> Though you can always try our other programmes like Stress Management by saying  <break time='200ms'/> Stress management  or for Boosting self confidence say  <break time='200ms'/>Boost Self Confidence or to stop the session say  <break time='200ms'/> STOP </prosody>", "Please speak to select your option?");
+							this.emit(':ask', "<prosody rate='92%'> Thank you for taking the quiz. Well, based on your responses, Your anger level seems to be normal  <break time='300ms'/> . But still Mind spa will send you some practice tips, motivational stories, hypothetical cases and monitor your progress at regular intervals.  <break time='300ms'/>. here is your first tip on anger management  <break time='500ms'/> " + tip + " <break time='500ms'/>  MindSpa currently offers other programmes like Stress Management and self confidence boosting. To subscribe,  say <break time='300ms'/>  “Boost Self Confidence” or <break time='300ms'/> Stress Management”. To end, Say <break time='300ms'/>  Stop.</prosody>", "Please speak to select your option?");
 						}
 						config.SCORE_CARD["quiz"] = [];
 
@@ -297,7 +366,7 @@ const mainHandler = {
 					console.log(result, "score till now.");
 				})
 				findOptions(result => {
-					this.emit(':ask', result, "I'm still waiting for your reply. Repeating the current question" + result);
+					this.emit(':ask', "<prosody rate='92%'>" + result + "</prosody>", "I'm still waiting for your reply. Repeating the current question" + result);
 				})
 			}
 		}
@@ -387,7 +456,7 @@ function findOptions(callback) {
 		quiz.anger_quiz[config.CURRENT_INDEX].options.map(res => {
 			option += res.question_option + "<break time='300ms'/>";
 		})
-		var message = quiz.anger_quiz[config.CURRENT_INDEX].question + "<break time='300ms'/>" + option
+		var message = quiz.anger_quiz[config.CURRENT_INDEX].question + "<break time='300ms'/>Your options are <break time='300ms'/>" + option
 		console.log(message, "message");
 		callback(message);
 	}
@@ -396,7 +465,7 @@ function findOptions(callback) {
 		quiz.confidence_quiz[config.CURRENT_INDEX].options.map(res => {
 			option += res.question_option + "<break time='300ms'/>";
 		})
-		var message = quiz.confidence_quiz[config.CURRENT_INDEX].question + "<break time='300ms'/>" + option
+		var message = quiz.confidence_quiz[config.CURRENT_INDEX].question + "<break time='300ms'/>Your options are <break time='300ms'/> " + option
 		console.log(message, "message");
 		callback(message);
 	}
@@ -405,7 +474,7 @@ function findOptions(callback) {
 		quiz.stress_quiz[config.CURRENT_INDEX].options.map(res => {
 			option += res.question_option + "<break time='300ms'/>";
 		})
-		var message = quiz.stress_quiz[config.CURRENT_INDEX].question + "<break time='300ms'/>" + option
+		var message = quiz.stress_quiz[config.CURRENT_INDEX].question + "<break time='300ms'/>Your options are <break time='300ms'/>" + option
 		console.log(message, "message");
 		callback(message);
 	}

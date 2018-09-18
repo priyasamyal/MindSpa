@@ -10,6 +10,8 @@ const config = {
   ANGER_INTRO: "<prosody rate='90%'>Anger is a normal, healthy emotion. It becomes unhealthy when it flares up all the time or spirals out of control.  </prosody>",
   CONFIDENCE_INTRO: "<prosody rate='90%'>Self confidence is elemental to your success. You become what you believe and practise. your ability to succeed in any situation depends primarily on your self confidence.</prosody>",
   STRESS_INTRO: "<prosody rate='90%'>Stress management is a wide spectrum of techniques and psychotherapy aimed at controlling a person's level of stress </prosody>",
+  unsubscribed_quizzes: [],
+  unsubscribed_msg: '',
 
   SKILL_NAME: 'Therapist',
   EVENT: {},
