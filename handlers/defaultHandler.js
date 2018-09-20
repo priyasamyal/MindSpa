@@ -8,10 +8,12 @@ const defaultHandler = {
   // },
   'AMAZON.CancelIntent': function () {
     console.log('CancelIntent called...');
-    if (this.attributes['CURRENT_STEP'] == 'launch') {
-      this.emit(':ask', 'Ohh, seems like you know what mind is. Ok then, lets see how controlled your mind is. Speak, Test My Anger to check you anger Management Skills. Or say, test My Confidence to check your Self Confidence level and say, Test My Stress, to check your stress level. Or say Stop to end this session.', "I'm still waiting. What would you like to test, Anger, Self Confidence, Stress");
+    // if (this.attributes['CURRENT_STEP'] == 'launch') {
+    //   this.emit(':ask', 'Ohh, seems like you know what mind is. Ok then, lets see how controlled your mind is. Speak, Test My Anger to check you anger Management Skills. Or say, test My Confidence to check your Self Confidence level and say, Test My Stress, to check your stress level. Or say Stop to end this session.', "I'm still waiting. What would you like to test, Anger, Self Confidence, Stress");
 
-    }
+    //  } else {
+    this.emit("AMAZON.StopIntent");
+    //  }
     //else if (
     //     this.attributes['CURRENT_STEP'] == 'instruction' ||
     //     this.attributes['CURRENT_STEP'] == 'start_quiz'

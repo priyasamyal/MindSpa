@@ -137,6 +137,13 @@ const mainHandler = {
 	'quizTypes': function () {
 		console.log('quizTypes called...');
 		var type = config.EVENT.request.intent.slots.options.value;
+
+		if (config.EVENT.request.intent.slots.options.resolutions.resolutionsPerAuthority[0].status.code == 'ER_SUCCESS_NO_MATCH') {
+			this.attributes['CURRENT_STEP'] = 'ask_for_anger';
+			console.log('Invalid opted...');
+			this.emit(":ask", "Sorry, <break time='200ms'/>This is not the valid program to choose. <break time='200ms'/> Please slect skip ")
+			//this.emit("startQuiz");
+		}
 		if (config.EVENT.request.intent.slots.options.resolutions.resolutionsPerAuthority[0].status.code == 'ER_SUCCESS_MATCH' && config.EVENT.request.intent.slots.options.resolutions.resolutionsPerAuthority[0].values[0].value.name == "Anger management") {
 			this.attributes['CURRENT_STEP'] = 'ask_for_anger';
 			console.log('Anger management opted...');
