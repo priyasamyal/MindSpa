@@ -3,7 +3,7 @@ const quiz = require('../lib/quiz.js');
 const defaultHandler = {
 
   'AMAZON.HelpIntent': function () {
-    var speechOutput = "<prosody rate='93%'>I can help you tracking your behaviour via series of questions and deliver you the  positive habit forming content like practice tips and audio stories. There are three experiential learning programmes which includes <break time='300ms'/> Anger Management <break time='300ms'/> Stress Management <break time='300ms'/> Boost Self- Confidence. Speak any  of the program to get started. </prosody>"
+    var speechOutput = "<prosody rate='93%'>Mind Spa can help you track your behaviour via series of questions and deliver positive habit forming content in the form of practice tips and audio stories.  You can say things like  <break time='300ms'/> Anger Management <break time='300ms'/> Stress Management <break time='300ms'/> Boost Self- Confidence. Which would you like? </prosody>"
 
     this.response.speak(speechOutput).listen(speechOutput);
     this.emit(':responseReady');

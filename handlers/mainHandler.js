@@ -141,7 +141,7 @@ const mainHandler = {
 		if (config.EVENT.request.intent.slots.options.resolutions.resolutionsPerAuthority[0].status.code == 'ER_SUCCESS_NO_MATCH') {
 			this.attributes['CURRENT_STEP'] = 'ask_for_anger';
 			console.log('Invalid opted...');
-			this.emit(":ask", "Sorry <break time='100ms'/>  " + config.EVENT.request.intent.slots.options.value + "  is not the valid program to choose. We have   Anger Management <break time='300ms'/> Stress Management <break time='300ms'/> or Boost Self- Confidence programmes. Which program would you like to choose? ")
+			this.emit(":ask", "Sorry <break time='100ms'/>  " + config.EVENT.request.intent.slots.options.value + "  is not a valid program to choose. You can say Anger Management <break time='300ms'/> Stress Management <break time='300ms'/> or Boost Self- Confidence. Which program would you like? ")
 			//this.emit("startQuiz");
 		}
 		if (config.EVENT.request.intent.slots.options.resolutions.resolutionsPerAuthority[0].status.code == 'ER_SUCCESS_MATCH' && config.EVENT.request.intent.slots.options.resolutions.resolutionsPerAuthority[0].values[0].value.name == "Anger management") {
@@ -194,7 +194,7 @@ const mainHandler = {
 			findOptions(result => {
 				var intro_msg = "";
 				if (config.CURRENT_INDEX == 0) {
-					intro_msg = "Thanks for subscribing to this program. <break time='200ms'/> Anger is an unnecessary emotion. Loads of stuff in life can trigger it, but what matters is how you react <break time='400ms'/>  To measure your Anger Level <break time='400ms'/>let's have a small quiz <break time='700ms'/>"
+					intro_msg = "Thanks for subscribing to this program. <break time='200ms'/> Anger is an unnecessary emotion. High and consistent anger may bring negative reputation or ill will and can even lead to nervous breakdown or brain haemmorage.<break time='400ms'/>  To measure your average Anger Level <break time='400ms'/>let's have a small quiz <break time='700ms'/>"
 				}
 				console.log(result, "result");
 				this.emit(':ask', "<prosody rate='92%'>" + intro_msg + result + "</prosody>", "I'm still waiting for your reply. Repeating the current question" + result);
@@ -204,7 +204,7 @@ const mainHandler = {
 			findOptions(result => {
 				var intro_msg = "";
 				if (config.CURRENT_INDEX == 0) {
-					intro_msg = "<prosody rate='92%'> Thanks for subscribing to this program. <break time='200ms'/> Confidence is a key element  in building a person perception. Lack of it will have a negative impact. to measure yours,  here is a small quiz  <break time='500ms'/> </prosody> "
+					intro_msg = "<prosody rate='92%'> Thanks for subscribing Self Confidence. <break time='200ms'/> Confidence is a key element in building your personality. Its lack may affect your personal and professional life and can even cause long term behavioural issues. To measure your self confidence, here is a small quiz  <break time='500ms'/> </prosody> "
 				}
 				console.log(result, "result");
 				this.emit(':ask', "<prosody rate='92%'>" + intro_msg + result + "</prosody>", "I'm still waiting for your reply. Repeating the current question" + result);
@@ -214,7 +214,7 @@ const mainHandler = {
 			findOptions(result => {
 				var intro_msg = "";
 				if (config.CURRENT_INDEX == 0) {
-					intro_msg = "<prosody rate='92%'> Thanks for subscribing to this program. <break time='200ms'/>Stress can exacerbate many serious health problems. Let’s checkout your current stress level by taking a small quiz and then we will move ahead. <break time='500ms'/> </prosody>"
+					intro_msg = "<prosody rate='92%'> Thanks for subscribing to Stress Management. <break time='200ms'/>Consistent and severe stress can cause serious health problems like hypertension and can even lead to nervous breakdown. Let’s check your average stress level via a small quiz. <break time='500ms'/> </prosody>"
 				}
 				console.log(result, "result");
 				this.emit(':ask', "<prosody rate='92%'>" + intro_msg + result + "</prosody>", "I'm still waiting for your reply. Repeating the current question" + result);
