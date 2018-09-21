@@ -6,9 +6,11 @@ const mainHandler = {
 	/** first intent to call */
 	'LaunchRequest': function () {
 		if (config.access_token == '' || config.access_token == undefined) {
-			this.response.cardRenderer("Hi, Welcome to  Mind Spa. Your account has not been linked with Mind Spa. Please go to your  alexa app and enable the account link option for Mind Spa skill ");
-			this.response.speak("Hi, Welcome to  Mind Spa. Your account has not been linked with Mind Spa. Please go to your  alexa app and enable the account link option for Mind Spa skill ");
-			this.emit(':responseReady');
+			// this.response.cardRenderer("Hi, Welcome to  Mind Spa. Your account has not been linked with Mind Spa. Please go to your  alexa app and enable the account link option for Mind Spa skill ");
+			// this.response.speak("Hi, Welcome to  Mind Spa. Your account has not been linked with Mind Spa. Please go to your  alexa app and enable the account link option for Mind Spa skill ");
+			// this.emit(':responseReady');
+
+			this.emit(":tellWithLinkAccountCard", "<prosody rate='94%'> Hi, Welcome to  Mind Spa. Your account has not been linked with Mind Spa. A link account card is delivered to home section in your alexa app, Tap the link account option to link your account with Mind Spa in order to use its complete functionality </prosody>")
 		}
 		else {
 			getUserData(myResult => {
@@ -136,7 +138,7 @@ const mainHandler = {
 
 	'quizTypes': function () {
 		console.log('quizTypes called...');
-		var type = config.EVENT.request.intent.slots.options.value;
+		//var type = config.EVENT.request.intent.slots.options.value;
 
 		if (config.EVENT.request.intent.slots.options.resolutions.resolutionsPerAuthority[0].status.code == 'ER_SUCCESS_NO_MATCH') {
 			this.attributes['CURRENT_STEP'] = 'ask_for_anger';

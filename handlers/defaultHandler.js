@@ -2,14 +2,45 @@ const config = require('../config.js');
 const quiz = require('../lib/quiz.js');
 const defaultHandler = {
 
+
+  'AMAZON.RepeatIntent': function () {
+
+    console.log(this.attributes['CURRENT_STEP'], "AMAZON.RepeatIntent");
+    if (this.attributes['CURRENT_STEP'] == 'launch') {
+      this.emit('LaunchRequest');
+    }
+    else if (this.attributes['CURRENT_STEP'] == 'ask_for_anger') {
+      this.emit(":ask", config.ANGER_INTRO + " <break time='200ms'/> You can subscribe to our tips on Anger Management. If you want Mind Spa to send you daily tips on Anger Management and to keep track of your behaviour, then say  <break time='200ms'/> Yes  <break time='200ms'/>or to skip this option say  <break time='200ms'/> skip ");
+    }
+    else if (this.attributes['CURRENT_STEP'] == 'ask_for_confidence') {
+      this.emit(":ask", config.CONFIDENCE_INTRO + " <break time='200ms'/> You can subscribe to our tips on Self Confidence. If you want Mind Spa to send you  daily tips on boosting self confidence and to keep track of your behaviour, then say  <break time='200ms'/> Yes  <break time='200ms'/> or to skip this option say  <break time='200ms'/> skip ");
+
+    }
+    else if (this.attributes['CURRENT_STEP'] == 'ask_for_stress') {
+      this.emit(":ask", config.STRESS_INTRO + " <break time='200ms'/> You can subscribe to our tips on Stress Management. If you want Mind Spa to send you  daily tips on Stress Management and to keep track of your behaviour, then say  <break time='200ms'/> Yes  <break time='200ms'/> or to skip this option say  <break time='200ms'/> skip ");
+    }
+    else if (this.attributes['CURRENT_STEP'] == 'anger_test' && this.attributes['CURRENT_STEP'] == 'confidence_test' && this.attributes['CURRENT_STEP'] == 'stress_test') {
+      this.emit('quizResponse');
+    }
+    else {
+      var speechOutput = "<prosody rate='93%'>Repeat Intent called </prosody>"
+      this.response.speak(speechOutput).listen(speechOutput);
+      this.emit(':responseReady');
+    }
+
+
+  },
+
+
+
   'AMAZON.HelpIntent': function () {
     var speechOutput = "<prosody rate='93%'>Mind Spa can help you track your behaviour via series of questions and deliver positive habit forming content in the form of practice tips and audio stories.  You can say things like  <break time='300ms'/> Anger Management <break time='300ms'/> Stress Management <break time='300ms'/> Boost Self- Confidence. Which would you like? </prosody>"
 
     this.response.speak(speechOutput).listen(speechOutput);
     this.emit(':responseReady');
 
-
   },
+
   'AMAZON.CancelIntent': function () {
     console.log('CancelIntent called...');
     this.emit("AMAZON.StopIntent");
