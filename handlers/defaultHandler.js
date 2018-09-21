@@ -2,62 +2,18 @@ const config = require('../config.js');
 const quiz = require('../lib/quiz.js');
 const defaultHandler = {
 
-  // 'AMAZON.HelpIntent': function () {
-  //   this.response.speak('speechOutput').listen('reprompt');
-  //   this.emit(':responseReady');
-  // },
+  'AMAZON.HelpIntent': function () {
+    var speechOutput = "<prosody rate='93%'>I can help you tracking your behaviour via series of questions and deliver you the  positive habit forming content like practice tips and audio stories. There are three experiential learning programmes which includes <break time='300ms'/> Anger Management <break time='300ms'/> Stress Management <break time='300ms'/> Boost Self- Confidence. Speak any  of the program to get started. </prosody>"
+
+    this.response.speak(speechOutput).listen(speechOutput);
+    this.emit(':responseReady');
+
+
+  },
   'AMAZON.CancelIntent': function () {
     console.log('CancelIntent called...');
-    // if (this.attributes['CURRENT_STEP'] == 'launch') {
-    //   this.emit(':ask', 'Ohh, seems like you know what mind is. Ok then, lets see how controlled your mind is. Speak, Test My Anger to check you anger Management Skills. Or say, test My Confidence to check your Self Confidence level and say, Test My Stress, to check your stress level. Or say Stop to end this session.', "I'm still waiting. What would you like to test, Anger, Self Confidence, Stress");
-
-    //  } else {
     this.emit("AMAZON.StopIntent");
-    //  }
-    //else if (
-    //     this.attributes['CURRENT_STEP'] == 'instruction' ||
-    //     this.attributes['CURRENT_STEP'] == 'start_quiz'
-    //   ) {
-    //     this.response
-    //       .speak(config.HANDLE_TEST_NO_launch)
-    //       .listen('I am still waiting for your response');
-    //     this.emit(':responseReady');
-    //   } else if (this.attributes['CURRENT_STEP'] == 'last_question') {
-    //     this.response
-    //       .speak(config.HANDLE_TEST_NO)
-    //       .listen('I am still waiting for your response');
-    //     this.emit(':responseReady');
-    //   } else if (this.attributes['CURRENT_STEP'] == 'show_result') {
-    //     this.attributes['CURRENT_STEP'] = 'angertips';
-    //     this.response
-    //       .speak(config.HANDLE_TEST_NO)
-    //       .listen('I am still waiting for your response');
-
-    //     this.emit(':responseReady');
-    //   } else if (this.attributes['CURRENT_STEP'] == 'angertips') {
-    //     console.log(randomNumber());
-    //     this.response
-    //       .speak(config.HANDLE_TEST_NO_TIP)
-    //       .listen('I am still waiting for your response');
-    //     this.attributes['CURRENT_STEP'] = 'nexttip';
-    //     this.emit(':responseReady');
-    //   } else if (this.attributes['CURRENT_STEP'] == 'nexttip') {
-    //     console.log('aaaaaa');
-    //     this.response
-    //       .speak(config.HANDLE_TEST_NO_TIP)
-    //       .listen('I am still waiting for your response');
-    //     this.emit(':responseReady');
-    //   } else if (this.attributes['CURRENT_STEP'] == 'audio') {
-    //     this.response
-    //       .speak(config.HANDLE_TEST_NO_AUDIO)
-    //       .listen('I am still waiting for your response');
-    //     this.emit(':responseReady');
-    //   } else {
-    //     this.response.speak('config.STOP_MESSAGE');
-    //     this.emit(':responseReady');
-    //   }
   },
-
 
   'AMAZON.StopIntent': function () {
     console.log('StopIntent called...');
