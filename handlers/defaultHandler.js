@@ -19,11 +19,18 @@ const defaultHandler = {
     else if (this.attributes['CURRENT_STEP'] == 'ask_for_stress') {
       this.emit(":ask", config.STRESS_INTRO + " <break time='200ms'/> You can subscribe to our tips on Stress Management. If you want Mind Spa to send you  daily tips on Stress Management and to keep track of your behaviour, then say  <break time='200ms'/> Yes  <break time='200ms'/> or to skip this option say  <break time='200ms'/> skip ");
     }
-    else if (this.attributes['CURRENT_STEP'] == 'anger_test' && this.attributes['CURRENT_STEP'] == 'confidence_test' && this.attributes['CURRENT_STEP'] == 'stress_test') {
-      this.emit('quizResponse');
+    else if (this.attributes['CURRENT_STEP'] == 'anger_test' || this.attributes['CURRENT_STEP'] == 'confidence_test' || this.attributes['CURRENT_STEP'] == 'stress_test') {
+      findOptions(result => {
+        console.log(result, "result");
+        this.emit(':ask', "Repeating the question again. " + result, "I'm still waiting for your reply. Repeating the current question" + result);
+      })
+      // this.emit('quizResponse');
+    }
+    else if (this.attributes['CURRENT_STEP'] == 'tip_behaviour') {
+      this.emit('LaunchRequest');
     }
     else {
-      var speechOutput = "<prosody rate='93%'>Repeat Intent called </prosody>"
+      var speechOutput = "<prosody rate='93%'>Sorry i could not repeat it. </prosody>"
       this.response.speak(speechOutput).listen(speechOutput);
       this.emit(':responseReady');
     }
@@ -34,7 +41,7 @@ const defaultHandler = {
 
 
   'AMAZON.HelpIntent': function () {
-    var speechOutput = "<prosody rate='93%'>Mind Spa can help you track your behaviour via series of questions and deliver positive habit forming content in the form of practice tips and audio stories.  You can say things like  <break time='300ms'/> Anger Management <break time='300ms'/> Stress Management <break time='300ms'/> Boost Self- Confidence. Which would you like? </prosody>"
+    var speechOutput = "<prosody rate='93%'>Mind Spa can help you track your behaviour via series of questions and deliver positive habit forming content in the form of practice tips, Hypothetical Use Cases, Short Story, audio stories and more.  You can say things like  <break time='300ms'/> Anger Management <break time='300ms'/> Stress Management <break time='300ms'/> Boost Self- Confidence. Which would you like? </prosody>"
 
     this.response.speak(speechOutput).listen(speechOutput);
     this.emit(':responseReady');
@@ -174,6 +181,34 @@ function findOptions(callback) {
     callback(message);
   }
 
+} function findOptions(callback) {
+  if (config.EVENT.session.attributes.CURRENT_STEP == 'anger_test') {
+    var option = "";
+    quiz.anger_quiz[config.CURRENT_INDEX].options.map(res => {
+      option += res.question_option + "<break time='300ms'/>";
+    })
+    var message = quiz.anger_quiz[config.CURRENT_INDEX].question + "<break time='300ms'/>Your options are <break time='300ms'/>" + option
+    console.log(message, "message");
+    callback(message);
+  }
+  else if (config.EVENT.session.attributes.CURRENT_STEP == 'confidence_test') {
+    var option = "";
+    quiz.confidence_quiz[config.CURRENT_INDEX].options.map(res => {
+      option += res.question_option + "<break time='300ms'/>";
+    })
+    var message = quiz.confidence_quiz[config.CURRENT_INDEX].question + "<break time='300ms'/>Your options are <break time='300ms'/> " + option
+    console.log(message, "message");
+    callback(message);
+  }
+  else if (config.EVENT.session.attributes.CURRENT_STEP == 'stress_test') {
+    var option = "";
+    quiz.stress_quiz[config.CURRENT_INDEX].options.map(res => {
+      option += res.question_option + "<break time='300ms'/>";
+    })
+    var message = quiz.stress_quiz[config.CURRENT_INDEX].question + "<break time='300ms'/>Your options are <break time='300ms'/>" + option
+    console.log(message, "message");
+    callback(message);
+  }
 }
 // /**
 //    * Get number ordinal value

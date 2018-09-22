@@ -196,7 +196,7 @@ const mainHandler = {
 			findOptions(result => {
 				var intro_msg = "";
 				if (config.CURRENT_INDEX == 0) {
-					intro_msg = "Thanks for subscribing to this program. <break time='200ms'/> Anger is an unnecessary emotion. High and consistent anger may bring negative reputation or ill will and can even lead to nervous breakdown or brain haemmorage.<break time='400ms'/>  To measure your average Anger Level <break time='400ms'/>let's have a small quiz <break time='700ms'/>"
+					intro_msg = "Thanks for subscribing to this program. <break time='200ms'/> Anger is an unnecessary emotion. High and consistent anger may bring negative reputation or ill will and can even lead to nervous breakdown or brain hemorrhage.<break time='400ms'/>  To measure your average Anger Level <break time='400ms'/>let's have a small quiz <break time='700ms'/>"
 				}
 				console.log(result, "result");
 				this.emit(':ask', "<prosody rate='92%'>" + intro_msg + result + "</prosody>", "I'm still waiting for your reply. Repeating the current question" + result);
