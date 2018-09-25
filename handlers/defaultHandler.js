@@ -60,6 +60,10 @@ const defaultHandler = {
     console.log('StopIntent called...');
     this.emit(':tell', config.STOP_MSG);
   },
+  'CatchAllIntent': function () {
+    console.log("catch all intent call");
+    this.emit('AMAZON.FallbackIntent');
+  },
 
   'AMAZON.FallbackIntent': function () {
     console.log('FallbackIntent called...');
@@ -77,10 +81,21 @@ const defaultHandler = {
       })
     }
     else if (this.attributes['CURRENT_STEP'] == 'tip_behaviour') {
+      console.log("empty slot", config.behaviour_index)
+      config.behaviour_quiz_id = config.behaviour_tip[config.behaviour_index].behaviour.quiz_id;
+      //	config.behaviour_index = config.behaviour_index + 1;
+      if (config.behaviour_quiz_id == 1) {
+        this.emit(':ask', "<prosody rate='92%'> Sorry  <break time='200ms'/> I did not get you. Repeating the tip <break time='200ms'/>" + config.anger_tip + " <break time='300ms'/> </prosody>", "I am still waiting for your response");
+      }
+      if (config.behaviour_quiz_id == 2) {
+        this.emit(':ask', " <prosody rate='92%'> Sorry  <break time='200ms'/> I did not get you. Repeating the tip <break time='200ms'/>" + config.Confidence_tip + " <break time='300ms'/> </prosody>", "I am still waiting for your response");
+      }
+      else if (config.behaviour_quiz_id == 3) {
+        this.emit(':ask', " <prosody rate='92%'> Sorry  <break time='200ms'/> I did not get you. Repeating the tip <break time='200ms'/>" + config.Stress_tip + " <break time='300ms'/> </prosody>", "I am still waiting for your response");
 
-      this.emit(":ask", "I'm sorry, I didn't get your response. Repeating the question  <break time='200ms'/>" + config.tip_ques, "I am still waiting for your response")
-
+      }
     }
+
     else if (this.attributes['CURRENT_STEP'] == 'anger_test' || this.attributes['CURRENT_STEP'] == 'stress_test' || this.attributes['CURRENT_STEP'] == 'confidence_test') {
       findOptions(result => {
         console.log(result, "result");

@@ -27,6 +27,7 @@ const config = {
 
   Stress_tip: '',
   Confidence_tip: '',
+  anger_tip: '',
   // RANDOM_NO: '',
   // HANDLE_TEST_NO_launch: "No problem, I have some audios and techniques to calm you down .To listen to anger management  techniques just say, “Calm me down” or to play audios just say “Play audio”. Or Stop to end this session'",
   // HANDLE_TEST_NO_AUDIO: "No problem, I have  techniques to calm you down and a test to see how much are you in control .To listen to anger management  techniques just say, “Calm me down” or to start test just say “Start test”. Or Stop to end this session'",
