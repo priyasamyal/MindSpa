@@ -12,6 +12,7 @@ const config = {
   STRESS_INTRO: "<prosody rate='90%'>Stress management is a wide spectrum of techniques and psychotherapy aimed at controlling a person's level of stress </prosody>",
   unsubscribed_quizzes: [],
   unsubscribed_msg: '',
+  tip_ques: '',
 
   SKILL_NAME: 'Therapist',
   EVENT: {},
